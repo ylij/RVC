@@ -1,0 +1,105 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>色环电阻值计算</title>
+<style id="style">
+  body{
+    background:teal;
+    text-align:center;
+	color:white;
+	margin:0;
+	margin-top:2em;
+  }
+  ul{
+    white-space:nowrap;
+    margin:0;
+    list-style:none;
+	padding:0;
+	height:2.5em;
+	overflow:hidden;
+	transition:all .3s linear;
+  }
+  input{vertical-align:-2px}
+  label{margin:0 .5em}
+  #colorRing{display:inline-flex}
+  li{margin:.5em}
+  li:hover{border-bottom:1px dashed #fff}
+  li:nth-child(n+2){
+    opacity:0;
+	transition:opacity .3s linear
+  }
+  ul:hover>li:nth-child(n+2){opacity:1}
+  .three>:nth-child(3),
+  .three>:nth-child(n+5),
+  .four>:nth-child(3),
+  .four>:last-child,
+  .five>:last-child{display:none}
+  
+  .height1:hover{height:21em}
+  .height2:hover{height:25em}
+  .height3:hover{height:19em}
+  .height4:hover{height:15em}
+</style>
+<body>
+  <div>
+	<label><input type="radio" name="n" checked>三环</label>
+	<label><input type="radio" name="n">四环</label>
+	<label><input type="radio" name="n">五环</label>
+	<label><input type="radio" name="n">六环</label>
+  </div>
+  <div id="colorRing" class="three"></div>
+  <div id="result"></div>
+  <script>
+	data=[
+	  {name:'黑',value:'black',num:0},
+	  {name:'棕',value:'#964b00',num:1,deviation:1,ppm:100},
+	  {name:'红',value:'red',num:2,deviation:2,ppm:50},
+	  {name:'橙',value:'orange',num:3,ppm:15},
+	  {name:'黄',value:'yellow',num:4,ppm:25},
+	  {name:'绿',value:'green',num:5,deviation:0.5},
+	  {name:'蓝',value:'blue',num:6,deviation:0.25,ppm:10},
+	  {name:'紫',value:'purple',num:7,deviation:0.1,ppm:5},
+	  {name:'灰',value:'gray',num:8,deviation:0.05},
+	  {name:'白',value:'white',num:9,ppm:1},
+	  {name:'金',value:'goldenrod',num:-1,deviation:5},
+	  {name:'银',value:'silver',num:-2,deviation:10},
+	  {name:'无',value:'transparent',deviation:20}
+	];
+	for(let i=0,ul,li;i<6;i++){
+	  ul=document.createElement('ul');
+	  ul.sub=i;
+	  ul.className=i<3?'height1':'height'+(i-1);
+	  for(let j=0;j<data.length;j++){
+	      li=document.createElement('li');
+		  li.innerHTML='■'+data[j].name+'色';
+		  li.className=String.fromCharCode(j+97);
+		  li.sub=j;
+		  li.onclick=function(){
+		    let e=this.parentNode,n,s=colorRing.className,ohms=['千欧(KΩ)','兆欧(MΩ)','吉欧(GΩ)'],i=-1;
+			if(this!=e.firstChild)e.insertBefore(this,e.firstChild);
+			n=colorRing.children[0].firstChild.sub+''+colorRing.children[1].firstChild.sub;
+			if(s=='five'||s=='')n+=colorRing.children[2].firstChild.sub;
+			n*=(10**data[colorRing.children[3].firstChild.sub].num);
+			if(n<1){
+		      n*=1000;
+			  result.innerHTML=n+'毫欧(mΩ)';
+			}else{
+			  while(n>=1000)n/=1000,i++;
+		      result.innerHTML=ohms[i]?n+ohms[i]:n+'欧(Ω)';
+		    }
+		    if(s!='three')result.innerHTML+='&nbsp;&nbsp;&nbsp;&nbsp;±'+data[colorRing.children[4].firstChild.sub].deviation+'%';
+		    if(s=='')result.innerHTML+='&nbsp;&nbsp;&nbsp;&nbsp;'+data[colorRing.children[5].firstChild.sub].ppm+'PPM/℃';
+		  }
+		  if(i<3&&j<10||i==3&&j<12||i==4&&data[j].deviation||i==5&&data[j].ppm)ul.appendChild(li);
+		  if(i==0)style.innerHTML+='.'+li.className+'::first-letter{color:'+data[j].value+'}';
+	  }
+	  colorRing.appendChild(ul);
+	}
+	radios=document.querySelectorAll('input');
+	for(let i=0,s=['three','four','five',''];i<4;i++){
+	  radios[i].onclick=function(){
+	    result.innerHTML='';
+		colorRing.className=s[i];
+	  }
+	}
+  </script>
+</body>
