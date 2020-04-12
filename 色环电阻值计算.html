@@ -2,27 +2,29 @@
 <meta charset="UTF-8">
 <title>色环电阻值计算</title>
 <style id="style">
+  body,ul{margin:0}
   body{
     background:teal;
     text-align:center;
 	color:white;
-	margin:0;
 	margin-top:2em;
   }
   ul{
     white-space:nowrap;
-    margin:0;
     list-style:none;
 	padding:0;
 	height:2.5em;
 	overflow:hidden;
 	transition:all .3s linear;
   }
-  input{vertical-align:-2px}
   label{margin:0 .5em}
   #colorRing{display:inline-flex}
   li{margin:.5em}
   li:hover{border-bottom:1px dashed #fff}
+  li::before{
+    content:'  ';
+	white-space:pre
+  }
   li:nth-child(n+2){
     opacity:0;
 	transition:opacity .3s linear
@@ -70,7 +72,7 @@
 	  ul.className=i<3?'height1':'height'+(i-1);
 	  for(let j=0;j<data.length;j++){
 	      li=document.createElement('li');
-		  li.innerHTML='■'+data[j].name+'色';
+		  li.innerHTML=data[j].name+'色';
 		  li.className=String.fromCharCode(j+97);
 		  li.sub=j;
 		  li.onclick=function(){
@@ -90,7 +92,7 @@
 		    if(s=='')result.innerHTML+='&nbsp;&nbsp;&nbsp;&nbsp;'+data[colorRing.children[5].firstChild.sub].ppm+'PPM/℃';
 		  }
 		  if(i<3&&j<10||i==3&&j<12||i==4&&data[j].deviation||i==5&&data[j].ppm)ul.appendChild(li);
-		  if(i==0)style.innerHTML+='.'+li.className+'::first-letter{color:'+data[j].value+'}';
+		  if(i==0)style.innerHTML+='.'+li.className+'::before{background:'+data[j].value+'}';
 	  }
 	  colorRing.appendChild(ul);
 	}
